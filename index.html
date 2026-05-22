@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minyi (Miya) Zhu — Business Analytics Professional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: { DEFAULT: '#F5F0E8', alt: '#EDE7DC' },
+            primary: '#0F1F1A',
+            secondary: '#4A5A54',
+            tertiary: '#7A8A84',
+            gold: '#9A7B3D',
+            success: '#3d6b5a',
+            rose: '#c47a7a',
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      background-color: #F5F0E8;
+      color: #0F1F1A;
+      font-family: 'Inter', sans-serif;
+    }
+    .font-serif { font-family: 'Playfair Display', serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
+    .delay-5 { transition-delay: 0.5s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-animate {
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    .hero-delay-1 { animation-delay: 0.2s; }
+    .hero-delay-2 { animation-delay: 0.4s; }
+    .hero-delay-3 { animation-delay: 0.6s; }
+    .hero-delay-4 { animation-delay: 0.8s; }
+
+    .premium-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(15, 31, 26, 0.07);
+    }
+    .premium-card:hover {
+      border-color: #9A7B3D;
+      box-shadow: 0 12px 40px -12px rgba(154, 123, 61, 0.25);
+      transform: translateY(-4px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #9A7B3D 0%, #b8944f 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-gold:hover {
+      box-shadow: 0 8px 24px -8px rgba(154, 123, 61, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-modal-fade { animation: modalFadeIn 0.3s ease; }
+    .animate-modal-slide { animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #F5F0E8; }
+    ::-webkit-scrollbar-thumb { background: #9A7B3D; border-radius: 4px; }
+
+    .tab-active {
+      background: #9A7B3D;
+      color: white;
+      border-color: #9A7B3D;
+    }
+
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card-animate {
+      opacity: 0;
+      animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (max-width: 768px) {
+      .modal-sheet {
+        border-radius: 24px 24px 0 0;
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+    .animate-bounce-slow { animation: bounce 2s infinite; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const CanvasBackground = () => {
+      const canvasRef = useRef(null);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        let width, height;
+
+        const resize = () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const lines = Array.from({ length: 6 }, () => ({
+          x: Math.random() * width,
+          y: height + Math.random() * 300,
+          speed: 0.2 + Math.random() * 0.4,
+          amplitude: 15 + Math.random() * 25,
+          frequency: 0.008 + Math.random() * 0.008,
+          opacity: 0.06 + Math.random() * 0.12,
+          phase: Math.random() * Math.PI * 2
+        }));
+
+        const nodes = Array.from({ length: 10 }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          radius: 1.5 + Math.random() * 2.5,
+          opacity: 0.08 + Math.random() * 0.15
+        }));
+
+        const metricTexts = ['+12.5%', 'KPI↑', 'ROI 24%', 'N=450', 'α=0.05', 'R²=0.92', 'p<0.01', 'YoY+10%'];
+        const metrics = Array.from({ length: 8 }, (_, i) => ({
+          x: Math.random() * width,
+          y: height + Math.random() * 150,
+          text: metricTexts[i],
+          speed: 0.15 + Math.random() * 0.35,
+          opacity: 0.06 + Math.random() * 0.1,
+          size: 11 + Math.random() * 7
+        }));
+
+        const animate = () => {
+          ctx.clearRect(0, 0, width, height);
+
+          lines.forEach(line => {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(154, 123, 61, ${line.opacity})`;
+            ctx.lineWidth = 1.2;
+            for (let y = 0; y < height; y += 4) {
+              const x = line.x + Math.sin(y * line.frequency + line.phase) * line.amplitude * (1 - y / height);
+              const drawY = height - y - (line.y * 0.3);
+              if (y === 0) ctx.moveTo(x, drawY);
+              else ctx.lineTo(x, drawY);
+            }
+            ctx.stroke();
+            line.phase += 0.008;
+            line.y -= line.speed;
+            if (line.y < -height) {
+              line.y = height + 100;
+              line.x = Math.random() * width;
+            }
+          });
+
+          ctx.strokeStyle = 'rgba(154, 123, 61, 0.05)';
+          ctx.lineWidth = 0.8;
+          for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+              const dx = nodes[i].x - nodes[j].x;
+              const dy = nodes[i].y - nodes[j].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 180) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          nodes.forEach(node => {
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(154, 123, 61, ${node.opacity})`;
+            ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+            ctx.fill();
+            node.x += node.vx;
+            node.y += node.vy;
+            if (node.x < 0 || node.x > width) node.vx *= -1;
+            if (node.y < 0 || node.y > height) node.vy *= -1;
+          });
+
+          metrics.forEach(metric => {
+            ctx.font = `${metric.size}px 'JetBrains Mono', monospace`;
+            ctx.fillStyle = `rgba(154, 123, 61, ${metric.opacity})`;
+            ctx.fillText(metric.text, metric.x, metric.y);
+            metric.y -= metric.speed;
+            if (metric.y < -40) {
+              metric.y = height + 60;
+              metric.x = Math.random() * width;
+            }
+          });
+
+          animationId = requestAnimationFrame(animate);
+        };
+
+        animate();
+        return () => {
+          cancelAnimationFrame(animationId);
+          window.removeEventListener('resize', resize);
+        };
+      }, []);
+
+      return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
+    };
+
+    const useScrollReveal = () => {
+      const ref = useRef(null);
+      useEffect(() => {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -60px 0px' }
+        );
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+      }, []);
+      return ref;
+    };
+
+    const Navigation = ({ activeSection, mobileMenuOpen, setMobileMenuOpen }) => {
+      const navItems = [
+        { id: 'hero', label: 'Home' },
+        { id: 'about', label: 'About' },
+        { id: 'experience', label: 'Experience' },
+        { id: 'certificates', label: 'Certificates' },
+      ];
+
+      const scrollTo = (id) => {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        setMobileMenuOpen(false);
+      };
+
+      return (
+        <>
+          <nav className="fixed left-0 top-0 h-full w-72 z-50 hidden md:flex flex-col justify-between p-8 glass border-r border-[rgba(15,31,26,0.07)]">
+            <div>
+              <div className="font-serif text-2xl font-bold text-primary mb-12">Minyi Zhu</div>
+              <ul className="space-y-6">
+                {navItems.map(item => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => scrollTo(item.id)}
+                      className={`flex items-center gap-3 text-sm tracking-[0.15em] uppercase transition-all duration-300 ${
+                        activeSection === item.id ? 'text-gold font-medium translate-x-1' : 'text-tertiary hover:text-primary'
+                      }`}
+                    >
+                      <span className={`inline-block w-2 h-2 rounded-full transition-all duration-300 ${
+                        activeSection === item.id ? 'bg-gold scale-125' : 'bg-transparent border border-tertiary'
+                      }`}></span>
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="text-xs text-tertiary font-mono space-y-1">
+              <div>Shanghai, CN</div>
+              <div>© 2025</div>
+            </div>
+          </nav>
+
+          <header className="fixed top-0 left-0 right-0 z-50 md:hidden glass border-b border-[rgba(15,31,26,0.07)]">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="font-serif text-xl font-bold text-primary">Minyi Zhu</div>
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="w-10 h-10 flex items-center justify-center rounded-lg border border-[rgba(15,31,26,0.07)] active:scale-95 transition-transform"
+              >
+                <div className="w-5 h-0.5 bg-primary relative">
+                  <span className={`absolute left-0 w-full h-0.5 bg-primary transition-all duration-300 ${mobileMenuOpen ? 'top-0 rotate-45' : '-top-1.5'}`}></span>
+                  <span className={`absolute left-0 w-full h-0.5 bg-primary transition-all duration-300 ${mobileMenuOpen ? 'top-0 -rotate-45' : 'top-1.5'}`}></span>
+                </div>
+              </button>
+            </div>
+
+            {mobileMenuOpen && (
+              <div className="absolute top-full left-0 right-0 glass border-b border-[rgba(15,31,26,0.07)] p-6 animate-modal-slide">
+                <ul className="space-y-4">
+                  {navItems.map(item => (
+                    <li key={item.id}>
+                      <button
+                        onClick={() => scrollTo(item.id)}
+                        className="text-sm tracking-[0.15em] uppercase text-primary w-full text-left py-2 hover:text-gold transition-colors"
+                      >
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </header>
+        </>
+      );
+    };
+
+    const HeroSection = () => {
+      return (
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-0">
+          <div className="absolute inset-0 z-[1] pointer-events-none" style={{
+            background: 'radial-gradient(ellipse at 50% 45%, rgba(245,240,232,0.85) 0%, rgba(245,240,232,0.5) 35%, transparent 65%)'
+          }}></div>
+
+          <div className="relative z-10 text-center px-6 max-w-4xl mx-auto md:ml-72">
+            <div className="hero-animate hero-delay-1 mb-6">
+              <span className="inline-block px-4 py-2 rounded-full border border-gold/20 bg-gold/5 text-xs tracking-[0.25em] uppercase text-gold font-medium">
+                Business Analytics Professional
+              </span>
+            </div>
+
+            <h1 className="hero-animate hero-delay-2 font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-primary leading-[1.1] mb-6">
+              Turning Data Into<br />
+              <span className="text-gold relative">
+                Strategic
+                <span className="absolute -inset-1 blur-2xl bg-gold/20 rounded-full -z-10"></span>
+              </span> Decisions
+            </h1>
+
+            <p className="hero-animate hero-delay-3 text-secondary text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+              Economics and finance graduate transforming complex data into actionable business strategies across <strong className="text-primary">consulting</strong>, <strong className="text-primary">tourism</strong>, <strong className="text-primary">hospitality</strong>, and <strong className="text-primary">retail</strong>.
+            </p>
+
+            <div className="hero-animate hero-delay-4 flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
+                className="btn-gold px-8 py-3.5 rounded-full text-white font-medium text-sm tracking-wide min-h-[44px]"
+              >
+                View My Work
+              </button>
+              <button 
+                onClick={() => document.getElementById('footer').scrollIntoView({ behavior: 'smooth' })}
+                className="px-8 py-3.5 rounded-full border border-[rgba(15,31,26,0.2)] text-primary font-medium text-sm tracking-wide hover:border-gold hover:text-gold transition-all duration-300 min-h-[44px]"
+              >
+                Contact Me
+              </button>
+            </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce-slow hidden md:block">
+            <div className="w-6 h-10 border-2 border-gold/30 rounded-full flex justify-center pt-2">
+              <div className="w-1 h-2 bg-gold/60 rounded-full"></div>
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const AboutSection = () => {
+      const headerRef = useScrollReveal();
+      const card1Ref = useScrollReveal();
+      const card2Ref = useScrollReveal();
+      const card3Ref = useScrollReveal();
+      const sandboxRef = useScrollReveal();
+
+      const metrics = [
+        {
+          dot: 'bg-success',
+          label: 'Experience',
+          number: '8+',
+          desc: 'Years of analytics across Disney, Deloitte, and luxury retail'
+        },
+        {
+          dot: 'bg-gold',
+          label: 'Impact',
+          number: '15+',
+          desc: 'High-potential tenants introduced at Disneytown driving 10%+ rent growth'
+        }
+      ];
+
+      return (
+        <section id="about" className="relative py-20 md:py-32 bg-cream-alt">
+          <div className="max-w-5xl mx-auto px-6 md:ml-72">
+            <div ref={headerRef} className="reveal mb-16">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-xs tracking-[0.25em] uppercase text-gold font-medium">01 — About Me</span>
+                <div className="flex-1 h-px bg-[rgba(15,31,26,0.1)]"></div>
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">
+                The <span className="text-gold">analytics professional</span> behind the data
+              </h2>
+              <p className="text-secondary max-w-2xl leading-relaxed">
+                From Big Four consulting to Fortune 500 theme parks , I translate numbers into narratives that drive decisions.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {metrics.map((metric, i) => (
+                <div 
+                  key={i}
+                  ref={i === 0 ? card1Ref : card2Ref}
+                  className={`reveal delay-${i + 1} premium-card bg-white rounded-2xl p-6 md:p-8`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-2.5 h-2.5 rounded-full ${metric.dot}`}></div>
+                    <span className="text-xs tracking-[0.15em] uppercase text-tertiary font-medium">{metric.label}</span>
+                  </div>
+                  <div className="font-serif text-4xl md:text-5xl font-bold text-gold mb-3">{metric.number}</div>
+                  <p className="text-sm text-secondary leading-relaxed">{metric.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div ref={sandboxRef} className="reveal delay-4 premium-card bg-white rounded-2xl p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-xs tracking-[0.15em] uppercase text-gold font-medium">Side Projects & Research</span>
+              </div>
+              <p className="text-sm text-tertiary mb-6">Independent analysis and community contributions beyond day-to-day roles.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-cream rounded-xl p-5 border border-[rgba(15,31,26,0.05)]">
+                  <div className="text-xs text-tertiary uppercase tracking-wider mb-2 font-medium">Deloitte Projects</div>
+                  <div className="font-serif text-3xl font-bold text-primary mb-2">20+</div>
+                  <p className="text-sm text-secondary leading-relaxed">Consumer persona projects for luxury, sports, and FMCG brands using Python and social listening</p>
+                </div>
+                <div className="bg-cream rounded-xl p-5 border border-[rgba(15,31,26,0.05)]">
+                  <div className="text-xs text-tertiary uppercase tracking-wider mb-2 font-medium">Research & Publications</div>
+                  <div className="font-serif text-3xl font-bold text-primary mb-2">4</div>
+                  <p className="text-sm text-secondary leading-relaxed">Published papers on corporate ownership structure and economic growth in Chinese journals</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-3">
+              {['Power BI', 'SQL', 'Tableau', 'Python', 'Excel VBA', 'Financial Modeling', 'Market Research', 'FP&A', 'Forecasting'].map(skill => (
+                <span key={skill} className="px-4 py-2 rounded-full text-xs font-medium border border-gold/15 bg-gold/5 text-gold hover:bg-gold/10 transition-colors cursor-default">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const ExperienceSection = ({ onProjectClick }) => {
+      const [activeTab, setActiveTab] = useState('moose');
+
+      const headerRef = useScrollReveal();
+      const tabsRef = useScrollReveal();
+      const infoRef = useScrollReveal();
+
+      const companies = {
+        moose: {
+          name: 'Moose Knuckles',
+          role: 'FP&A Assistant Manager',
+          period: 'Jun 2025 – Sep 2025',
+          projects: [
+            {
+              title: '3-Year Strategic Planning',
+              tags: ['Budgeting', 'Forecasting'],
+              desc: 'Managed the budgeting, forecasting and 3-year long-term planning process for luxury retail operations.',
+              metric: '3-year LTP',
+              detail: {
+                challenge: 'Luxury retail required agile financial planning amid market volatility and aggressive expansion goals across APAC.',
+                solution: 'Led end-to-end FP&A cycle including annual operating plans, quarterly re-forecasts, and long-term strategic projections.',
+                impact: ['Established 3-year planning framework', 'Aligned cross-functional budget owners', 'Delivered monthly leadership reports', 'Supported APAC expansion capex decisions']
+              }
+            },
+            {
+              title: 'Daily Performance Reporting',
+              tags: ['Microsoft Office', 'KPI Tracking'],
+              desc: 'Delivered daily performance reports and monthly company management reports to executive leadership.',
+              metric: 'Daily cadence',
+              detail: {
+                challenge: 'Leadership needed real-time visibility into retail performance across channels, regions, and product categories.',
+                solution: 'Built automated reporting infrastructure delivering daily KPIs and comprehensive monthly management packs with variance analysis.',
+                impact: ['Enabled daily leadership decision-making', 'Standardized cross-channel metrics', 'Reduced month-end close time', 'Flagged underperforming SKUs proactively']
+              }
+            }
+          ]
+        },
+        disney: {
+          name: 'Shanghai Disney Resort',
+          role: 'Senior Business Analyst',
+          period: 'Dec 2020 – Mar 2025',
+          projects: [
+            {
+              title: 'Disneytown Attendance Dashboard',
+              tags: ['Power BI', 'Data Automation'],
+              desc: 'Independently generated a comprehensive attendance dashboard replacing manual reporting processes.',
+              metric: '+50% efficiency',
+              detail: {
+                challenge: 'Manual attendance reporting was time-consuming and error-prone, limiting operational responsiveness for 15+ retail tenants.',
+                solution: 'Built an automated Power BI dashboard integrating multiple data sources with real-time refresh and drill-down capabilities.',
+                impact: ['Reduced reporting time by 50%', 'Enabled daily executive decision-making', 'Supported 15+ tenant onboarding initiatives', 'Drove 10%+ rent growth through data-driven insights']
+              }
+            },
+            {
+              title: 'SoReal VR Launch Analytics',
+              tags: ['Forms', 'Power BI', 'Market Research'],
+              desc: 'Formulated and deployed trial operation questionnaires for a new VR entertainment tenant.',
+              metric: '120% of target',
+              detail: {
+                challenge: 'New VR tenant needed data-driven insights to optimize pre-opening operations and guest experience strategy.',
+                solution: 'Designed Microsoft Forms questionnaires collecting 450+ responses, analyzed via Power BI dashboards with sentiment and behavioral segmentation.',
+                impact: ['450+ valid responses collected', 'Influenced operational team decisions', 'Achieved 120% of first-month attendance target', 'Established template for future tenant launches']
+              }
+            },
+            {
+              title: 'Dynamic Ticket Pricing',
+              tags: ['SQL', 'Tableau', 'Forecasting'],
+              desc: 'Researched and forecasted optimal ticket pricing for peak seasons using multi-variable analysis.',
+              metric: '102% & 98% AOP',
+              detail: {
+                challenge: 'Needed to optimize pricing for March and May 2024 considering weather, holidays, competitive landscape, and AOP targets.',
+                solution: 'Created Tableau dashboard with multi-site comparison, weather correlation, and AOP target tracking using SQL-extracted historical data.',
+                impact: ['March achieved 102% of AOP target', 'May achieved 98% of AOP target', 'Established reusable pricing framework', 'Integrated tourism bureau external data']
+              }
+            }
+          ,
+            {
+              title: 'Strategic Reporting',
+              tags: ['Executive Reporting', 'AOP', 'LTP'],
+              desc: 'Owned the delivery of timely reporting to team and executive leadership including weekly/monthly business reporting, ad-hoc analysis, and deep-dive investigations. Supported Shanghai International Resort development works with a focus on expansion. Participated in the development of Annual Operating Plans (AOP) and Long-term Plans.',
+              metric: 'AOP & LTP',
+              detail: {
+                challenge: 'Executive leadership required comprehensive and timely business intelligence to support strategic decision-making for resort operations and expansion planning.',
+                solution: 'Established end-to-end reporting cadence delivering weekly/monthly business reports, ad-hoc analysis, and deep-dive investigations. Actively participated in AOP and Long-term Plans development while supporting resort expansion initiatives.',
+                impact: ['Delivered timely reporting to executive leadership', 'Supported Shanghai International Resort development works', 'Participated in AOP and Long-term Plans development', 'Enabled data-driven expansion decisions']
+              }
+            },
+            {
+              title: 'Market Intelligence',
+              tags: ['Market Research', 'Competitive Intel', 'Trend Analysis'],
+              desc: 'Independently monitored market intelligence to global and local executive leadership, including macro economy, consumers, technology, tourism and hospitality; global & local newly opened properties and RD&E flashes. The analysis of digital experience trends in theme parks was adopted as a reference for the expansion project.',
+              metric: 'Expansion reference',
+              detail: {
+                challenge: 'Leadership needed continuous market intelligence across macro economy, consumer behavior, technology, and competitive landscape to inform strategic positioning and expansion decisions.',
+                solution: 'Built and maintained market intelligence monitoring system covering macro economy, consumer trends, technology developments, tourism and hospitality innovations, and global & local newly opened properties. Produced RD&E flashes and trend analyses.',
+                impact: ['Digital experience trends analysis adopted for expansion project', 'Continuous competitive landscape monitoring', 'Informed leadership on macro and industry trends', 'Supported strategic positioning decisions']
+              }
+            }]
+        },
+        deloitte: {
+          name: 'Deloitte China',
+          role: 'Business Analyst',
+          period: 'Jun 2018 – Dec 2020',
+          projects: [
+            {
+              title: 'Consumer Persona',
+              tags: ['Python', 'Social Listening', 'CDD'],
+              desc: 'Analyzed Dianping and Rednote social listening data using Python for commercial due diligence.',
+              metric: 'Luxury sector',
+              detail: {
+                challenge: 'Client needed deep consumer insights for China market entry strategy and premium site selection decisions.',
+                solution: 'Scraped and analyzed 10,000+ social media posts using Python NLP (jieba, wordcloud) to generate detailed consumer personas and sentiment maps.',
+                impact: ['Identified 4 distinct consumer segments', 'Informed CDD investment recommendations', 'Adopted by client strategy team', 'Supported 2 CIIE representations']
+              }
+            },
+            {
+              title: 'Mackage Brand Analysis',
+              tags: ['Power BI', 'Competitive Intel'],
+              desc: 'Compared down jacket brands social listening data to deliver competitive intelligence dashboard.',
+              metric: 'Multi-brand',
+              detail: {
+                challenge: 'Mackage needed competitive positioning against established down jacket brands in China premium retail.',
+                solution: 'Built interactive Power BI dashboard comparing brand sentiment, pricing elasticity, channel strategies, and influencer engagement.',
+                impact: ['Mapped 6 key competitors', 'Identified white-space opportunities', 'Supported retail expansion strategy', 'Delivered to C-suite within 2 weeks']
+              }
+            },
+            {
+              title: 'Multi-Sector FDD Dashboards',
+              tags: ['SQL', 'Tableau', 'FDD'],
+              desc: 'Generated independent dashboards for energy, auto, manufacturing, and financial service sectors.',
+              metric: '5 sectors',
+              detail: {
+                challenge: 'Financial Due Diligence team needed sector-specific analytics for transaction support across diverse industries.',
+                solution: 'Created standardized yet customizable Tableau templates with SQL backends for cross-sector financial analysis and benchmarking.',
+                impact: ['Supported 20+ CDD/FDD projects', 'Reduced analysis turnaround by 30%', 'Established firm-wide template library', 'Covered energy, auto, manufacturing, FS, life science']
+              }
+            }
+          ]
+        },
+        cleantech: {
+          name: 'LA Cleantech Incubator',
+          role: 'Financial Analyst',
+          period: 'May 2016 – Dec 2017',
+          projects: [
+            {
+              title: 'Portfolio Evaluation',
+              tags: ['Financial Modeling', 'VC'],
+              desc: 'Evaluated debt fund financials and improved business models for 12 cleantech portfolio companies.',
+              metric: '12 companies',
+              detail: {
+                challenge: 'Portfolio required rigorous financial health assessments and business model optimization for Series A/B readiness.',
+                solution: 'Built detailed three-statement financial models, cap tables, and sensitivity analyses for debt fund evaluation and VC presentation.',
+                impact: ['Evaluated 12 portfolio companies', 'Improved 8 business models', 'Facilitated 3 follow-on investments', 'Built VC relationship network']
+              }
+            },
+            {
+              title: 'China Market Intelligence',
+              tags: ['Research', 'Tableau'],
+              desc: 'Generated China cleantech market research covering investment trends, technology, and business etiquette.',
+              metric: 'Market maps',
+              detail: {
+                challenge: 'Portfolio companies sought expansion into China but lacked localized market intelligence and investor network.',
+                solution: 'Produced comprehensive market research reports and Tableau visualization of investment landscape, policy trends, and partnership opportunities.',
+                impact: ['Mapped 50+ Chinese cleantech investors', 'Identified 8 partnership opportunities', 'Informed board expansion decisions', 'Attended monthly industry seminars']
+              }
+            }
+          ]
+        },
+        senate: {
+          name: 'CA State Senate',
+          role: 'Economics Analyst Intern',
+          period: 'Oct 2015 – May 2016',
+          projects: [
+            {
+              title: 'Tax Revenue Analysis',
+              tags: ['Excel VBA', 'Policy'],
+              desc: 'Analyzed sales tax revenue data from other states to evaluate SB 8 (Upward Mobility Act) revenue impact.',
+              metric: 'Policy support',
+              detail: {
+                challenge: 'Senator Hertzberg needed robust data to support SB 8 legislation predicting California revenue increases from service tax expansion.',
+                solution: 'Collected and normalized multi-state sales tax datasets via Excel VBA automation, built forecast models for revenue projection and scenario planning.',
+                impact: ['Analyzed 10 comparable states', 'Projected revenue increase scenarios', 'Supported legislative testimony', 'Optimized resource allocation models']
+              }
+            },
+            {
+              title: 'Grants Optimization',
+              tags: ['Data Analysis', 'Public Sector'],
+              desc: 'Acquired and analyzed California grants data to study internal relations and optimize resource allocation.',
+              metric: 'Efficiency',
+              detail: {
+                challenge: 'State grants were distributed sub-optimally across districts with uneven economic impact and limited outcome tracking.',
+                solution: 'Built optimization model correlating grant distribution with employment, GDP, and social outcome metrics using multivariate regression.',
+                impact: ['Identified 15% reallocation opportunity', 'Supported equitable distribution policy', 'Published in internal briefing', 'Presented to legislative staff']
+              }
+            }
+          ]
+        }
+      };
+
+      const currentCompany = companies[activeTab];
+
+      return (
+        <section id="experience" className="relative py-20 md:py-32">
+          <div className="max-w-5xl mx-auto px-6 md:ml-72">
+            <div ref={headerRef} className="reveal mb-12">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-xs tracking-[0.25em] uppercase text-gold font-medium">02 — Work Experience</span>
+                <div className="flex-1 h-px bg-[rgba(15,31,26,0.1)]"></div>
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">
+                Where <span className="text-gold">strategy</span> meets execution
+              </h2>
+            </div>
+
+            <div ref={tabsRef} className="reveal flex flex-wrap gap-2 mb-10">
+              {Object.entries(companies).map(([key, company]) => (
+                <button
+                  key={key}
+                  onClick={() => { setActiveTab(key); }}
+                  className={`px-4 py-2.5 rounded-full text-xs font-medium tracking-wide border transition-all duration-300 whitespace-nowrap min-h-[44px] ${
+                    activeTab === key 
+                      ? 'tab-active shadow-lg shadow-gold/20' 
+                      : 'border-[rgba(15,31,26,0.15)] text-secondary hover:border-gold hover:text-gold'
+                  }`}
+                >
+                  {company.name}
+                </button>
+              ))}
+            </div>
+
+            <div ref={infoRef} className="reveal mb-8">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2">
+                <h3 className="font-serif text-xl font-bold text-primary">{currentCompany.name}</h3>
+                <span className="text-xs text-tertiary font-mono px-2 py-1 bg-cream rounded-md border border-[rgba(15,31,26,0.07)]">{currentCompany.period}</span>
+              </div>
+              <p className="text-sm text-secondary">{currentCompany.role}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {currentCompany.projects.map((project, i) => (
+                <div
+                  key={i}
+                  className="card-animate premium-card bg-white rounded-2xl p-6 cursor-pointer group"
+                  style={{ animationDelay: `${i * 0.12}s` }}
+                  onClick={() => onProjectClick({ ...project, company: currentCompany.name })}
+                >
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="px-3 py-1 rounded-full text-[10px] font-medium border border-gold/15 bg-gold/5 text-gold">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h4 className="font-serif text-lg font-bold text-primary mb-2 group-hover:text-gold transition-colors duration-300">{project.title}</h4>
+                  <p className="text-sm text-secondary line-clamp-2 mb-4 leading-relaxed">{project.desc}</p>
+                  <div className="flex items-center justify-between pt-4 border-t border-[rgba(15,31,26,0.05)]">
+                    <span className="font-mono text-xs text-gold font-medium">{project.metric}</span>
+                    <span className="text-xs text-tertiary group-hover:text-gold transition-colors duration-300 flex items-center gap-1">
+                      View Details <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const ProjectsSection = ({ onProjectClick }) => {
+      const headerRef = useScrollReveal();
+      const card1Ref = useScrollReveal();
+      const card2Ref = useScrollReveal();
+      const card3Ref = useScrollReveal();
+
+      const certificates = [
+        {
+          title: 'Pricing Strategy in Practice',
+          org: 'Coursera / BCG & University of Virginia',
+          date: 'Dec 2025',
+          desc: 'Gained practical frameworks for pricing strategy development, value-based pricing, and competitive pricing analysis through real-world BCG case studies.',
+          tags: ['Pricing Strategy', 'BCG', 'Business Strategy'],
+          gradient: 'from-success/20 to-success/5'
+        },
+        {
+          title: 'Managing Big Data with MySQL',
+          org: 'Coursera / Duke University',
+          date: 'Apr 2016',
+          desc: 'Gained hands-on experience in relational database design, complex SQL queries, and big data management using MySQL for business analytics applications.',
+          tags: ['MySQL', 'Big Data', 'Database Design'],
+          gradient: 'from-gold/20 to-gold/5'
+        },
+
+
+
+        {
+          title: 'Data Visualization and Communication with Tableau',
+          org: 'Coursera / Duke University',
+          date: 'Feb 2016',
+          desc: 'Developed skills in creating compelling data visualizations and communicating insights effectively using Tableau for business decision-making.',
+          tags: ['Tableau', 'Data Visualization', 'Communication'],
+          gradient: 'from-rose/20 to-rose/5'
+        }
+      ];
+
+      return (
+        <section id="certificates" className="relative py-20 md:py-32 bg-cream-alt">
+          <div className="max-w-5xl mx-auto px-6 md:ml-72">
+            <div ref={headerRef} className="reveal mb-12">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-xs tracking-[0.25em] uppercase text-gold font-medium">03 — Certificates</span>
+                <div className="flex-1 h-px bg-[rgba(15,31,26,0.1)]"></div>
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">
+                Professional <span className="text-gold">Certifications</span> & Credentials
+              </h2>
+            </div>
+
+            <div className="space-y-6">
+              {certificates.map((cert, i) => (
+                <div
+                  key={i}
+                  ref={i === 0 ? card1Ref : i === 1 ? card2Ref : card3Ref}
+                  className={`reveal delay-${i + 1} premium-card bg-white rounded-2xl overflow-hidden group`}
+                >
+                  <div className="flex flex-col md:flex-row">
+                    <div className={`md:w-2/5 h-44 md:h-auto bg-gradient-to-br ${cert.gradient} flex items-center justify-center relative overflow-hidden`}>
+                      <div className="text-center z-10 px-6">
+                        <div className="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-gold/30 bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                          <svg className="w-7 h-7 text-gold/80" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.499 5.221 50.55 50.55 0 00-2.658.813m-15.482 0a50.55 50.55 0 002.658.813m0 0c.862.268 1.753.434 2.658.491m-2.658-.491l2.659 2.659m0 0a50.573 50.573 0 012.659-2.659m-2.659 2.659l2.659-2.659" />
+                          </svg>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-gold/70 block leading-tight">{cert.org}</span>
+                        <span className="font-mono text-lg font-bold text-gold/50 block mt-1.5">{cert.date}</span>
+                      </div>
+                    </div>
+                    <div className="md:w-3/5 p-6 md:p-8">
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {cert.tags.map(tag => (
+                          <span key={tag} className="px-3 py-1 rounded-full text-[10px] font-medium border border-gold/15 bg-gold/5 text-gold">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="font-serif text-xl font-bold text-primary mb-3">{cert.title}</h3>
+                      <p className="text-sm text-secondary leading-relaxed">{cert.desc}</p>
+                      <div className="mt-6 flex items-center text-xs text-tertiary font-medium">
+                        <span>{cert.org}</span>
+                        <span className="mx-2">·</span>
+                        <span>{cert.date}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const Modal = ({ project, onClose }) => {
+      useEffect(() => {
+        const handleEsc = (e) => e.key === 'Escape' && onClose();
+        document.addEventListener('keydown', handleEsc);
+        document.body.style.overflow = 'hidden';
+        return () => {
+          document.removeEventListener('keydown', handleEsc);
+          document.body.style.overflow = '';
+        };
+      }, [onClose]);
+
+      return (
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center animate-modal-fade" onClick={onClose}>
+          <div className="absolute inset-0 bg-primary/40 backdrop-blur-sm" onClick={onClose}></div>
+          <div 
+            className="relative bg-white w-full md:max-w-2xl md:rounded-2xl modal-sheet shadow-2xl max-h-[85vh] overflow-y-auto animate-modal-slide"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-[rgba(15,31,26,0.07)] px-6 py-4 flex items-center justify-between z-10">
+              <div className="min-w-0">
+                <span className="text-xs text-tertiary font-mono block truncate">{project.company}</span>
+                <h3 className="font-serif text-lg font-bold text-primary truncate">{project.title}</h3>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-9 h-9 rounded-full border border-[rgba(15,31,26,0.15)] flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 flex-shrink-0 ml-4"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 md:p-8">
+              {project.detail ? (
+                <>
+                  <div className="mb-8">
+                    <span className="text-xs font-bold text-gold uppercase tracking-[0.2em]">Challenge</span>
+                    <p className="text-sm text-secondary mt-3 leading-relaxed">{project.detail.challenge}</p>
+                  </div>
+
+                  <div className="mb-8">
+                    <span className="text-xs font-bold text-gold uppercase tracking-[0.2em]">What I Did</span>
+                    <p className="text-sm text-secondary mt-3 leading-relaxed">{project.detail.solution}</p>
+                  </div>
+
+                  <div className="mb-6">
+                    <span className="text-xs font-bold text-gold uppercase tracking-[0.2em]">Impact</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                      {project.detail.impact.map((item, i) => (
+                        <div key={i} className="bg-cream rounded-xl p-4 flex items-start gap-3 border border-[rgba(15,31,26,0.05)]">
+                          <div className="w-2 h-2 rounded-full bg-gold mt-2 flex-shrink-0"></div>
+                          <span className="text-sm text-secondary leading-relaxed">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <span className="text-xs font-bold text-gold uppercase tracking-[0.2em]">Problem</span>
+                    <p className="text-sm text-secondary mt-3 leading-relaxed">{project.problem}</p>
+                  </div>
+                  <div className="mb-6">
+                    <span className="text-xs font-bold text-gold uppercase tracking-[0.2em]">Solution</span>
+                    <p className="text-sm text-secondary mt-3 leading-relaxed">{project.solution}</p>
+                  </div>
+                  <div className="bg-cream rounded-xl p-6 text-center border border-[rgba(15,31,26,0.05)]">
+                    <span className="font-serif text-3xl font-bold text-gold">{project.metric}</span>
+                    <p className="text-xs text-tertiary mt-2">Key Performance Indicator</p>
+                  </div>
+                </>
+              )}
+
+              <div className="mt-8 pt-6 border-t border-[rgba(15,31,26,0.07)]">
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map(tag => (
+                    <span key={tag} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gold/15 bg-gold/5 text-gold">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const Footer = () => {
+      return (
+        <footer id="footer" className="relative py-12 md:py-16 border-t border-gold/20">
+          <div className="max-w-5xl mx-auto px-6 md:ml-72 text-center md:text-left">
+            <div className="w-12 h-px bg-gold mx-auto md:mx-0 mb-8"></div>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div>
+                <h3 className="font-serif text-2xl font-bold text-primary mb-1">Minyi (Miya) Zhu</h3>
+                <p className="text-sm text-tertiary">Business Analytics Professional</p>
+              </div>
+              <div className="flex flex-col md:items-end gap-2">
+                <a href="https://www.linkedin.com/in/miyaminyizhu" target="_blank" rel="noopener noreferrer" className="text-sm text-secondary hover:text-gold transition-colors duration-300 inline-flex items-center gap-1">
+                  LinkedIn <span>→</span>
+                </a>
+                <a href="mailto:miyazhuba@163.com" className="text-sm text-secondary hover:text-gold transition-colors duration-300">
+                  miyazhuba@163.com
+                </a>
+                <span className="text-xs text-tertiary font-mono mt-1">Shanghai, CN</span>
+              </div>
+            </div>
+            <div className="mt-8 pt-6 border-t border-[rgba(15,31,26,0.07)] text-center md:text-left">
+              <p className="text-xs text-tertiary">© 2025 Minyi Zhu. Built with React & Tailwind CSS.</p>
+            </div>
+          </div>
+        </footer>
+      );
+    };
+
+    const App = () => {
+      const [activeSection, setActiveSection] = useState('hero');
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [selectedProject, setSelectedProject] = useState(null);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          const sections = ['hero', 'about', 'experience', 'certificates'];
+          const scrollPos = window.scrollY + window.innerHeight / 3;
+
+          for (const section of sections) {
+            const el = document.getElementById(section);
+            if (el && scrollPos >= el.offsetTop && scrollPos < el.offsetTop + el.offsetHeight) {
+              setActiveSection(section);
+              break;
+            }
+          }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      return (
+        <div className="min-h-screen bg-cream text-primary font-sans antialiased selection:bg-gold/20 selection:text-gold">
+          <CanvasBackground />
+          <Navigation 
+            activeSection={activeSection} 
+            mobileMenuOpen={mobileMenuOpen} 
+            setMobileMenuOpen={setMobileMenuOpen} 
+          />
+
+          <main className="relative z-10">
+            <HeroSection />
+            <AboutSection />
+            <ExperienceSection onProjectClick={setSelectedProject} />
+            <ProjectsSection onProjectClick={setSelectedProject} />
+          </main>
+
+          <Footer />
+
+          {selectedProject && (
+            <Modal 
+              project={selectedProject} 
+              onClose={() => setSelectedProject(null)} 
+            />
+          )}
+        </div>
+      );
+    };
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+  </script>
+</body>
+</html>
