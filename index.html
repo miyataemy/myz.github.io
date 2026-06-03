@@ -423,12 +423,6 @@
           label: 'Experience',
           number: '8+',
           desc: 'Years of analytics across Disney, Deloitte, and luxury retail'
-        },
-        {
-          dot: 'bg-gold',
-          label: 'Impact',
-          number: '15+',
-          desc: 'High-potential tenants introduced at Disneytown driving 10%+ rent growth'
         }
       ];
 
@@ -448,11 +442,11 @@
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8 max-w-md mx-auto md:mx-0">
               {metrics.map((metric, i) => (
                 <div 
                   key={i}
-                  ref={i === 0 ? card1Ref : card2Ref}
+                  ref={card1Ref}
                   className={`reveal delay-${i + 1} premium-card bg-white rounded-2xl p-6 md:p-8`}
                 >
                   <div className="flex items-center gap-3 mb-4">
