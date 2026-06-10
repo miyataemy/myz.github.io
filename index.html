@@ -415,6 +415,7 @@
       const card1Ref = useScrollReveal();
       const card2Ref = useScrollReveal();
       const card3Ref = useScrollReveal();
+      const card4Ref = useScrollReveal();
       const sandboxRef = useScrollReveal();
 
       const metrics = [
@@ -765,8 +766,17 @@
       const card1Ref = useScrollReveal();
       const card2Ref = useScrollReveal();
       const card3Ref = useScrollReveal();
+      const card4Ref = useScrollReveal();
 
       const certificates = [
+        {
+          title: 'Claude Code in Action',
+          org: 'Anthropic Academy',
+          date: 'Jun 2026',
+          desc: 'Completed hands-on training in AI-assisted coding and development workflows using Claude Code, demonstrating practical application of AI tools in software development and automation.',
+          tags: ['AI', 'Claude Code', 'Automation'],
+          gradient: 'from-success/20 to-success/5'
+        },
         {
           title: 'Pricing Strategy in Practice',
           org: 'Coursera / BCG & University of Virginia',
@@ -783,9 +793,6 @@
           tags: ['MySQL', 'Big Data', 'Database Design'],
           gradient: 'from-gold/20 to-gold/5'
         },
-
-
-
         {
           title: 'Data Visualization and Communication with Tableau',
           org: 'Coursera / Duke University',
@@ -813,7 +820,7 @@
               {certificates.map((cert, i) => (
                 <div
                   key={i}
-                  ref={i === 0 ? card1Ref : i === 1 ? card2Ref : card3Ref}
+                  ref={i === 0 ? card1Ref : i === 1 ? card2Ref : i === 2 ? card3Ref : card4Ref}
                   className={`reveal delay-${i + 1} premium-card bg-white rounded-2xl overflow-hidden group`}
                 >
                   <div className="flex flex-col md:flex-row">
